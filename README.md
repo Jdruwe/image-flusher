@@ -1,6 +1,6 @@
 # Image Flusher
 
-The image flusher is a Chrome extension developer by Jeroen Druwé (druwe.jeroen@gmail.com).
+The image flusher is a Chrome extension developed by Jeroen Druwé (druwe.jeroen@gmail.com).
 The extension allows the user to easily flush image from the varnish cache using a Jenkins
 job in the background.
 
