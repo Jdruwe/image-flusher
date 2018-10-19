@@ -1,6 +1,6 @@
 {
   "name": "A.S.Adventure Image Flusher",
-  "version": "1.1",
+  "version": "1.2",
   "description": "Flushes images using the Jenkins job.",
   "permissions": [
     "storage",
