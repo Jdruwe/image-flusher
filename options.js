@@ -32,7 +32,8 @@ function updateOptions() {
     const storage = {
         jenkins: {
             username: document.getElementById("username").value,
-            password: document.getElementById("password").value
+            password: document.getElementById("password").value,
+            job: document.getElementById("job").value
         },
         config: JSON.parse(document.getElementById("config").value)
     };
