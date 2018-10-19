@@ -20,38 +20,31 @@ function setInitialData() {
                     "https://shop.asadventure.nl",
                     "https://shop.asadventure.co.uk",
                     "https://shop.asadventure.fr",
-                    "https://shop.asadventure.lu",
-                    "http://preview.asadventure.com"
+                    "https://shop.asadventure.lu"
                 ],
                 "juttu": [
                     "https://www.juttu.be",
-                    "https://shop.juttu.be",
-                    "http://preview.juttu.be"
+                    "https://shop.juttu.be"
                 ],
                 "yaya": [
                     "https://www.yaya.be",
-                    "https://shop.yaya.be",
-                    "http://preview.yaya.be"
+                    "https://shop.yaya.be"
                 ],
                 "runnersneed": [
                     "https://www.runnersneed.com",
-                    "https://shop.runnersneed.com",
-                    "http://preview.runnersneed.com"
+                    "https://shop.runnersneed.com"
                 ],
                 "bever": [
                     "https://www.bever.nl",
-                    "https://shop.bever.nl",
-                    "http://preview.bever.nl"
+                    "https://shop.bever.nl"
                 ],
                 "cyclesurgery": [
                     "https://www.cyclesurgery.com",
-                    "https://shop.cyclesurgery.com",
-                    "http://preview.cyclesurgery.com"
+                    "https://shop.cyclesurgery.com"
                 ],
                 "snowandrock": [
                     "https://www.snowandrock.com",
-                    "https://shop.snowandrock.com",
-                    "http://preview.snowandrock.com"
+                    "https://shop.snowandrock.com"
                 ],
                 "cotswold": [
                     "https://www.cotswoldoutdoor.com",
@@ -59,8 +52,7 @@ function setInitialData() {
                     "https://www.cotswoldoutdoor.us",
                     "https://www.cotswoldoutdoor.com.au",
                     "https://shop.cotswoldoutdoor.com",
-                    "https://shop.cotswoldoutdoor.ie",
-                    "http://preview.cotswoldoutdoor.com"
+                    "https://shop.cotswoldoutdoor.ie"
                 ],
                 "mctrek": [
                     "https://www.mctrek.de",
