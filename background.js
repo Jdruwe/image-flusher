@@ -316,7 +316,7 @@ function buildFlushRequest(jenkinsInfo) {
 
 function handleFlushStateChange(readyState, status) {
     if (readyState === XMLHttpRequest.DONE && status === 201) {
-        notify("Image flush job called successfully.");
+        notify("Flush job called successfully.");
         playFlushSound();
     } else if (readyState === XMLHttpRequest.DONE && status === 401) {
         notify("Jenkins authentication error, please check your credentials in the options.");
