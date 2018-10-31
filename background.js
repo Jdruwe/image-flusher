@@ -1,14 +1,49 @@
 chrome.runtime.onInstalled.addListener(function () {
     setInitialData();
-    notify("Installation successful, please fill in the options.");
+    notify("Installation successful");
 });
+
+///////////////////////////
+//// DATA
+///////////////////////////
 
 function setInitialData() {
     chrome.storage.sync.set({
         jenkins: {
             job: "http://jenkins.aws.intranet/view/AEM/job/flushCache"
         },
-        config: {
+        fascias: ["asadventure", "bever", "cotswold", "cyclesurgery", "juttu", "mctrek", "runnersneed", "snowandrock", "yaya"],
+        authoring: [
+            {
+                url: "http://author-001.prd.aws.intranet",
+                color: "red"
+            },
+            {
+                url: "http://author.prd.aws.intranet",
+                color: "red"
+            },
+            {
+                url: "http://author-001.acc.aws.intranet",
+                color: "orange"
+            },
+            {
+                url: "http://author.acc.aws.intranet",
+                color: "orange"
+            },
+            {
+                url: "http://author-001.tst.aws.intranet",
+                color: "blue"
+            },
+            {
+                url: "http://author.tst.aws.intranet",
+                color: "blue"
+            },
+            {
+                url: "http://localhost:4502",
+                color: "green"
+            }
+        ],
+        environments: {
             "prd001": {
                 "asadventure": [
                     "https://www.asadventure.com",
@@ -186,10 +221,32 @@ function setInitialData() {
     });
 }
 
+chrome.runtime.onMessage.addListener((msg, sender, response) => {
+    switch (msg.type) {
+        case "getAuthoringInformation":
+            getAuthoringInformation(response);
+            break;
+    }
+    return true;
+});
+
+function getAuthoringInformation(response) {
+    chrome.storage.sync.get("authoring", (data) => {
+        response(data.authoring);
+    });
+}
+
+//TODO: include messaging for data retrieval from options.js and content scripts
+
+///////////////////////////
+//// CONTEXT
+///////////////////////////
+
 chrome.contextMenus.create({
     id: "flush-image",
     title: "Flush Image",
-    contexts: ["image"]
+    contexts: ["image"],
+    targetUrlPatterns: ["http://*/content/dam/*", "https://*/content/dam/*"]
 });
 
 chrome.contextMenus.onClicked.addListener(function (info, tab) {
@@ -202,32 +259,43 @@ function isFlushImageItemClicked(info) {
     return info.menuItemId === "flush-image";
 }
 
+///////////////////////////
+//// FLUSH IMAGE
+///////////////////////////
+
 function flushImage(info, tab) {
-    const match = matchToBeFlushedImage(info);
-    if (isValidMatch(match)) {
+    const match = matchImage(info);
+    if (isImageMatchValid(match)) {
         const url = new URL(tab.url);
-        prepareImageFlush(url, match);
+        const damLocation = getDamLocationFromImageMatch(match);
+        prepareImageFlush(url, damLocation);
     } else {
-        notify("You can't flush this image.")
+        notify("You can't flush this image.");
     }
 }
 
-function isValidMatch(match) {
-    return (match != null) && (typeof match[1] !== "undefined");
-}
-
-function matchToBeFlushedImage(info) {
+function matchImage(info) {
     const pattern = ".*(\/content\/dam\/.*?.(jpeg|jpg|png|gif)).*";
     return info.srcUrl.match(pattern);
 }
 
-function prepareImageFlush(url, matchedImage) {
-    chrome.storage.sync.get(["jenkins", "config"], function (data) {
+function isImageMatchValid(match) {
+    return (match != null) && (typeof match[1] !== "undefined");
+}
+
+function getDamLocationFromImageMatch(match) {
+    return match[1];
+}
+
+function prepareImageFlush(url, damLocation) {
+    chrome.storage.sync.get(["jenkins", "environments", "fascias"], function (data) {
+
         const environment = getEnvironment(url);
-        const fascia = getFascia(url);
+        const fascia = getFascia(url, data.fascias);
+
         if (environment && fascia) {
-            const domains = getDomains(environment, fascia, data.config);
-            const flushUrl = buildFlushUrl(domains, matchedImage);
+            const domains = getDomains(environment, fascia, data.environments);
+            const flushUrl = buildFlushUrl(domains, damLocation);
             executeFlushJob(data.jenkins, environment, flushUrl);
         } else {
             notify("Could not retrieve the environment or fascia from the image.");
@@ -235,60 +303,9 @@ function prepareImageFlush(url, matchedImage) {
     });
 }
 
-function notify(message) {
-    chrome.notifications.create(null, {
-        type: "basic",
-        iconUrl: "assets/images/icon128.png",
-        title: "Image Flusher",
-        message: message
-    });
-}
-
-function getEnvironment(url) {
-    if (url.hostname.startsWith("tst-")) {
-        return "tst001";
-    }
-
-    if (url.hostname.startsWith("acc-")) {
-        return "acc001";
-    }
-
-    if (url.hostname.startsWith("prp-")) {
-        return "prp001";
-    }
-
-    if (url.hostname.startsWith("www.")) {
-        return "prd001";
-    }
-}
-
-function getFascia(url) {
-    const fascias = ["asadventure", "bever", "cotswold", "cyclesurgery", "juttu", "mctrek", "runnersneed", "snowandrock", "yaya"];
-    for (let i = 0; i < fascias.length; i++) {
-        if (isFascia(url, fascias[i])) {
-            return fascias[i];
-        }
-    }
-}
-
-function isFascia(url, fascia) {
-    return containsText(url.hostname, fascia);
-}
-
-function containsText(context, text) {
-    return context.indexOf(text) !== -1;
-}
-
-function getDomains(environment, fascia, config) {
-    if (environment && fascia) {
-        const envConfig = config[environment];
-        return envConfig[fascia];
-    }
-}
-
-function buildFlushUrl(domains, matchedImage) {
+function buildFlushUrl(domains, damLocation) {
     return domains
-        .map(domain => `${domain}${matchedImage[1]}`)
+        .map(domain => `${domain}${damLocation}`)
         .join("|");
 }
 
@@ -318,7 +335,65 @@ function handleFlushStateChange(readyState, status) {
 }
 
 function playFlushSound() {
+    playSound("assets/sounds/flush.mp3");
+}
+
+///////////////////////////
+//// PAGE FLUSH
+///////////////////////////
+
+// TODO
+
+///////////////////////////
+//// GENERAL
+///////////////////////////
+
+function getEnvironment(url) {
+    if (url.hostname.startsWith("tst-")) {
+        return "tst001";
+    }
+
+    if (url.hostname.startsWith("acc-")) {
+        return "acc001";
+    }
+
+    if (url.hostname.startsWith("prp-")) {
+        return "prp001";
+    }
+
+    if (url.hostname.startsWith("www.")) {
+        return "prd001";
+    }
+}
+
+function getFascia(url, fascias) {
+    return fascias.find((fascia) => isFascia(url, fascia));
+}
+
+function isFascia(url, fascia) {
+    return containsText(url.hostname, fascia);
+}
+
+function containsText(context, text) {
+    return context.indexOf(text) !== -1;
+}
+
+function getDomains(environment, fascia, config) {
+    const envConfig = config[environment];
+    return envConfig[fascia];
+}
+
+function playSound(assetLocation) {
     const myAudio = new Audio();
-    myAudio.src = chrome.extension.getURL("assets/music/flush.mp3");
+    myAudio.src = chrome.extension.getURL(assetLocation);
     myAudio.play();
+}
+
+function notify(message) {
+    chrome.notifications.create(null, {
+        type: "basic",
+        iconUrl: "assets/images/icon128.png",
+        title: "Image Flusher",
+        message: message
+    });
 }

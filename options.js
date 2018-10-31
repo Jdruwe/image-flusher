@@ -4,6 +4,9 @@ function initializeOptions() {
 }
 
 function displaySavedOptions() {
+
+
+
     chrome.storage.sync.get('jenkins', function (data) {
         document.getElementById("job").value = data.jenkins.job;
         if (data.jenkins.username) {
@@ -14,9 +17,15 @@ function displaySavedOptions() {
         }
     });
 
-    chrome.storage.sync.get('config', function (data) {
-        if (data.config) {
-            document.getElementById("config").value = JSON.stringify(data.config);
+    chrome.storage.sync.get('environments', function (data) {
+        if (data.environments) {
+            document.getElementById("environments").value = JSON.stringify(data.environments);
+        }
+    });
+
+    chrome.storage.sync.get('fascias', function (data) {
+        if (data.fascias) {
+            document.getElementById("fascias").value = JSON.stringify(data.fascias);
         }
     });
 }
@@ -35,7 +44,8 @@ function updateOptions() {
             password: document.getElementById("password").value,
             job: document.getElementById("job").value
         },
-        config: JSON.parse(document.getElementById("config").value)
+        environments: JSON.parse(document.getElementById("environments").value),
+        fascias: JSON.parse(document.getElementById("fascias").value)
     };
 
     chrome.storage.sync.set(storage, function () {

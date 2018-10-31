@@ -1,64 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <style>
-        .container {
-            margin: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .well {
-            padding: 10px;
-            background-color: whitesmoke;
-            border-radius: 5px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        label {
-            margin-bottom: 5px;
-            margin-top: 5px;
-        }
-
-        .save {
-            margin-top: 10px;
-        }
-
-        .rainbow {
-            animation: rainbow 3s infinite;
-        }
-
-        @keyframes rainbow {
-            0% {
-                color: orange;
-            }
-            10% {
-                color: purple;
-            }
-            20% {
-                color: red;
-            }
-            40% {
-                color: yellow;
-            }
-            60% {
-                color: green;
-            }
-            100% {
-                color: blue;
-            }
-            100% {
-                color: orange;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="options.css">
 </head>
 <body>
 
 <div class="container">
-    <h1 class="rainbow">Image Flusher</h1>
+    <span class="logo"></span>
+    <h1>AEM Chrome Tools</h1>
     <h2>Jenkins</h2>
     <div class="well">
         <label for="job"><b>Job Url</b></label>
@@ -73,7 +22,12 @@
 
     <h2>Environments</h2>
     <div class="well">
-        <textarea id="config" placeholder="Provide config"></textarea>
+        <textarea id="environments" placeholder="Provide config"></textarea>
+    </div>
+
+    <h2>Fascia's</h2>
+    <div class="well">
+        <textarea id="fascias" placeholder="Provide fascia's"></textarea>
     </div>
 
     <button class="save" id="saveOptions">Save</button>

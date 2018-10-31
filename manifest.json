@@ -1,11 +1,12 @@
 {
-  "name": "A.S.Adventure Image Flusher",
-  "version": "1.2",
-  "description": "Flushes images using the Jenkins job.",
+  "name": "AEM Chrome Tools",
+  "version": "1.0",
+  "description": "Some handy chrome functionality",
   "permissions": [
     "storage",
     "notifications",
     "contextMenus",
+    "tabs",
     "http://jenkins.aws.intranet/"
   ],
   "background": {
@@ -14,6 +15,18 @@
     ],
     "persistent": false
   },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "environment-display.js"
+      ],
+      "run_at": "document_end"
+    }
+  ],
   "page_action": {
     "default_icon": {
       "16": "assets/images/icon16.png",
@@ -29,7 +42,7 @@
     "128": "assets/images/icon128.png"
   },
   "web_accessible_resources": [
-    "*.mp3"
+    "assets/*"
   ],
   "options_page": "options.html",
   "manifest_version": 2
