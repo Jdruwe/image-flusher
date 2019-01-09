@@ -14,28 +14,37 @@ function handleAuthoringInformation(data) {
     const location = window.location.toString();
     const authoringInfo = data.find(info => location.startsWith(info.url));
     if (authoringInfo) {
-        displayEnvironmentInfo(authoringInfo);
+        displayEnvironmentInfo(authoringInfo.color);
     }
 }
 
-function displayEnvironmentInfo(authoringInfo) {
-    displayAemEnvironmentInfo(authoringInfo);
-    displayCrxEnvironmentInfo(authoringInfo);
+function displayEnvironmentInfo(color) {
+    displayAemEnvironmentInfo(color);
+    displayCrxEnvironmentInfo(color);
+    displayEditorEnvironmentInfo(color);
 }
 
-function displayAemEnvironmentInfo(authoringInfo) {
+function displayAemEnvironmentInfo(color) {
     addStyleString(`
         .coral-Shell-header {
-            background-color: ${authoringInfo.color};
+            background-color: ${color};
         }
     `);
 }
 
-function displayCrxEnvironmentInfo(authoringInfo) {
+function displayCrxEnvironmentInfo(color) {
     addStyleString(
-        `.crx-switcher.crx-delite {
-            background-color: ${authoringInfo.color};
+        `.crx-switcher.crx-delite, .crx-switcher.crx-packmgr  {
+            background-color: ${color};
             background-blend-mode: multiply;
+        }
+    `);
+}
+
+function displayEditorEnvironmentInfo(color) {
+    addStyleString(
+        `.editor-GlobalBar {
+            background-color: ${color};
         }
     `);
 }

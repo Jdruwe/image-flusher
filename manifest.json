@@ -25,6 +25,16 @@
         "environment-display.js"
       ],
       "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "http://*/*editor.html*",
+        "https://*/*editor.html*"
+      ],
+      "js": [
+        "component-redirect.js"
+      ],
+      "run_at": "document_end"
     }
   ],
   "page_action": {
